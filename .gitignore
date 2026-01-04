@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.pyc
+
+# Virtual environments
+.venv/
+venv/
+
+# Local databases and logs
+app.db
+app.log
+*.log
+
+# IDE / OS files
+.idea/
+.DS_Store

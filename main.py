@@ -7,7 +7,7 @@ import uuid
 from datetime import datetime, timezone
 from typing import Optional, Literal
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, HTTPException
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field, conint
 
@@ -186,6 +186,26 @@ def tx_recent(limit: int = 25):
     finally:
         conn.close()
 
+
+
+@app.get("/transactions/by-order/{order_id}")
+def tx_by_order(order_id: str):
+    """Fetch a single transaction by its order_id (exact match)."""
+    order_id = order_id.strip()
+
+    conn = get_conn()
+    try:
+        row = conn.execute(
+            "SELECT * FROM transactions WHERE order_id = ?",
+            (order_id,),
+        ).fetchone()
+
+        if not row:
+            raise HTTPException(status_code=404, detail="Not Found")
+
+        return dict(row)
+    finally:
+        conn.close()
 
 @app.get("/transactions/bad-query")
 def tx_bad_query():
